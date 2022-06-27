@@ -5,9 +5,9 @@ import com.intro.microservices.restfulwebservices.dto.User;
 import com.intro.microservices.restfulwebservices.exceptions.UnableToProcessException;
 import com.intro.microservices.restfulwebservices.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,12 +23,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-    private UserService userService;
 
-    @BeforeEach
-    void setUp() {
-        userService = new UserService(userRepository);
-    }
+    @InjectMocks
+    private UserService userService;
 
     @Test
     void test_userIdEntered_saveUser() {

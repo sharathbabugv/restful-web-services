@@ -14,18 +14,11 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
     /**
      * Following method will save the user in database.
-     *
-     * @param user
      */
     public void saveUser(User user) {
         if (UserUtils.isUserValid(user) && user.getId() == null) {
@@ -37,8 +30,6 @@ public class UserService {
 
     /**
      * Retrieves list of all the users from the database
-     *
-     * @return
      */
     public List<User> getAllUser() {
         List<User> userList = new ArrayList<>();
@@ -53,9 +44,6 @@ public class UserService {
 
     /**
      * Finds the user in the database, based on the given user id
-     *
-     * @param id
-     * @return
      */
     public User findUserById(Integer id) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -67,9 +55,6 @@ public class UserService {
 
     /**
      * Updates the user in the database.
-     *
-     * @param user
-     * @return
      */
     public User updateUser(User user) {
         if (UserUtils.isUserValid(user) && user.getId() != null && userRepository.existsById(user.getId())) {
@@ -81,8 +66,6 @@ public class UserService {
 
     /**
      * Deletes the user from the database, based on the given user id
-     *
-     * @param id
      */
     public void deleteUserById(Integer id) {
         if (userRepository.existsById(id)) {
