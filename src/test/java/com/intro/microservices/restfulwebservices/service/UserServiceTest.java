@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
@@ -43,6 +45,32 @@ public class UserServiceTest {
     }
 
     @Test
+    void test_userFirstNameInvalidLength_saveUser() {
+        User user = new User();
+        user.setFirstName("Be");
+        user.setLastName("User");
+
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.saveUser(user), Messages.NAME_VALIDATION);
+
+        Assertions.assertEquals(Messages.NAME_VALIDATION, thrown.getMessage());
+
+    }
+
+    @Test
+    void test_userLastNameInvalidLength_saveUser() {
+        User user = new User();
+        user.setFirstName("Name");
+        user.setLastName("Is");
+
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.saveUser(user), Messages.NAME_VALIDATION);
+
+        Assertions.assertEquals(Messages.NAME_VALIDATION, thrown.getMessage());
+
+    }
+
+    @Test
     void test_saveUser() {
         User user = new User();
         user.setFirstName("Test");
@@ -66,13 +94,13 @@ public class UserServiceTest {
         userList.add(user);
         userList.add(user2);
 
-        Mockito.when(userRepository.findAll()).thenReturn(userList);
+        when(userRepository.findAll()).thenReturn(userList);
         Assertions.assertEquals(2, userService.getAllUser().size());
     }
 
     @Test
     void test_getAllUserWhenNoDataPresent() {
-        Mockito.when(userRepository.findAll()).thenReturn(new ArrayList<>());
+        when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
         UnableToProcessException thrown = Assertions
                 .assertThrows(UnableToProcessException.class, () ->
@@ -95,7 +123,77 @@ public class UserServiceTest {
         user.setFirstName("Test");
         user.setLastName("User");
 
-        Mockito.when(userRepository.findById(123)).thenReturn(Optional.of(user));
+        when(userRepository.findById(123)).thenReturn(Optional.of(user));
         Assertions.assertEquals(123, userService.findUserById(123).getId());
+    }
+
+    @Test
+    void test_updateUser() {
+        User user = new User();
+        user.setId(123);
+        user.setFirstName("Dummy");
+        user.setLastName("User");
+
+        when(userRepository.existsById(123)).thenReturn(true);
+        userService.updateUser(user);
+        Mockito.verify(userRepository).save(user);
+    }
+
+    @Test
+    void test_invalidUserId_updateUser() {
+        User user = new User();
+        user.setId(123);
+        user.setFirstName("Dummy");
+        user.setLastName("User");
+
+        when(userRepository.existsById(123)).thenReturn(false);
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.updateUser(user), Messages.USER_ID_NOT_FOUND);
+
+        Assertions.assertEquals(Messages.USER_ID_NOT_FOUND, thrown.getMessage());
+    }
+
+    @Test
+    void test_userFirstNameInvalidLength_updateUser() {
+        User user = new User();
+        user.setFirstName("Be");
+        user.setLastName("User");
+
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.updateUser(user), Messages.NAME_VALIDATION);
+
+        Assertions.assertEquals(Messages.NAME_VALIDATION, thrown.getMessage());
+
+    }
+
+    @Test
+    void test_userLastNameInvalidLength_updateUser() {
+        User user = new User();
+        user.setFirstName("Name");
+        user.setLastName("Is");
+
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.updateUser(user), Messages.NAME_VALIDATION);
+
+        Assertions.assertEquals(Messages.NAME_VALIDATION, thrown.getMessage());
+
+    }
+
+    @Test
+    void test_deleteUserById() {
+        when(userRepository.existsById(123)).thenReturn(true);
+
+        userService.deleteUserById(123);
+        Mockito.verify(userRepository).deleteById(123);
+    }
+
+    @Test
+    void test_invalidUserId_deleteUserById() {
+        when(userRepository.existsById(123)).thenReturn(false);
+
+        UnableToProcessException thrown = Assertions
+                .assertThrows(UnableToProcessException.class, () -> userService.deleteUserById(123), Messages.USER_ID_NOT_FOUND);
+
+        Assertions.assertEquals(Messages.USER_ID_NOT_FOUND, thrown.getMessage());
     }
 }

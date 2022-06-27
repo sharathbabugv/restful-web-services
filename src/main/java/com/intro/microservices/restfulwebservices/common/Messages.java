@@ -6,4 +6,5 @@ public final class Messages {
     public static final String NO_USERS_FOUND = "No users found";
     public static final String NO_USER_FOUND_WITH_ID = "User not found with user id : %s";
     public static final String USER_ID_NOT_FOUND = "User ID is either empty or not found";
+    public static final String NAME_VALIDATION = "Please enter valid first name or last name. Minimum characters for each are 3";
 }
